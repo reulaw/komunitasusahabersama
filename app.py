@@ -11,7 +11,7 @@ def login():
             return redirect("https://www.google.com/")
         else:
             return "TOLOL"
-    return render_template("login.html")
+    return render_template("auth.html")
 
 
 if __name__ == "__main__":
