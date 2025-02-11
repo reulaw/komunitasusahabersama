@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Org Chart with MDB and Correct Positioning</title>
+    <!-- MDB CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/mdb-ui-kit@6.4.0/css/mdb.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Apply Google Font to the entire page */
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .org-chart {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            position: relative;
+        }
+        .org-node {
+            margin: 20px;
+            padding: 20px 30px;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            text-align: center;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: relative;
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+        .org-children {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            position: relative;
+            margin-top: 40px; /* Add space for the connecting lines */
+        }
+        .org-node::before {
+            content: '';
+            position: absolute;
+            top: -20px; /* Position the line above the node */
+            left: 50%;
+            width: 1px;
+            height: 20px;
+            background-color: #ccc;
+            transform: translateX(-50%); /* Center the line */
+        }
+        .org-children::before {
+            content: '';
+            position: absolute;
+            top: -20px; /* Position the line above the children container */
+            left: 50%;
+            width: 1px;
+            height: 20px;
+            background-color: #ccc;
+            transform: translateX(-50%); /* Center the line */
+        }
+        .org-children::after {
+            content: '';
+            position: absolute;
+            top: -20px; /* Position the horizontal line */
+            left: 50%;
+            width: 100%; /* Span the entire width of the children container */
+            height: 1px;
+            background-color: #ccc;
+            transform: translateX(-50%); /* Center the line */
+        }
+        .org-node:only-child::before {
+            display: none; /* Hide the vertical line if there's only one child */
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div id="orgChart" class="org-chart"></div>
+    </div>
+
+    <!-- MDB JS -->
+    <script src="https://cdn.jsdelivr.net/npm/mdb-ui-kit@6.4.0/js/mdb.min.js"></script>
+    <script>
+        // Sample array representing the org chart
+        const orgData = [
+            {
+                name: "CEO",
+                children: [
+                    {
+                        name: "VP Engineering",
+                        children: [
+                            { name: "Engineering Manager 1" },
+                            { name: "Engineering Manager 2" }
+                        ]
+                    },
+                    {
+                        name: "VP Marketing",
+                        children: [
+                            { name: "Marketing Manager 1" },
+                            { name: "Marketing Manager 2" }
+                        ]
+                    }
+                ]
+            }
+        ];
+
+        // Function to generate the org chart
+        function generateOrgChart(data, container) {
+            if (!data) return;
+
+            // Create the node
+            const node = document.createElement('div');
+            node.className = 'org-node shadow-3';
+            node.textContent = data.name;
+
+            // Append the node to the container
+            container.appendChild(node);
+
+            // If the node has children, create a container for them
+            if (data.children && data.children.length > 0) {
+                const childrenContainer = document.createElement('div');
+                childrenContainer.className = 'org-children';
+
+                // Recursively generate the org chart for each child
+                data.children.forEach(child => {
+                    generateOrgChart(child, childrenContainer);
+                });
+
+                // Append the children container to the current node
+                container.appendChild(childrenContainer);
+            }
+        }
+
+        // Generate the org chart on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const orgChartContainer = document.getElementById('orgChart');
+            generateOrgChart(orgData[0], orgChartContainer);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,154 @@
+<head>
+    <title>Report - Komunitas Usaha Bersama</title>
+    <!-- MDB CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/mdb-ui-kit@6.4.0/css/mdb.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Apply Google Font to the entire page */
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .org-chart {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            position: relative;
+        }
+        .org-node {
+            margin: 20px;
+            padding: 20px 30px;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            text-align: center;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: relative;
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+        .org-children {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            position: relative;
+            margin-top: 40px; /* Add space for the connecting lines */
+        }
+        .org-node::before {
+            content: '';
+            position: absolute;
+            top: -20px; /* Position the line above the node */
+            left: 50%;
+            width: 1px;
+            height: 20px;
+            background-color: #ccc;
+            transform: translateX(-50%); /* Center the line */
+        }
+        .org-children::before {
+            content: '';
+            position: absolute;
+            top: -20px; /* Position the line above the children container */
+            left: 50%;
+            width: 1px;
+            height: 20px;
+            background-color: #ccc;
+            transform: translateX(-50%); /* Center the line */
+        }
+        .org-children::after {
+            content: '';
+            position: absolute;
+            top: -20px; /* Position the horizontal line */
+            left: 0;
+            right: 0;
+            height: 1px;
+            background-color: #ccc;
+        }
+        .org-node:only-child::before {
+            display: none; /* Hide the vertical line if there's only one child */
+        }
+    </style>
+</head>
+{% extends "base.html" %}
+{% block content %}
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Report</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="{{url_for('index')}}">Dashboard</a></li>
+        <li class="breadcrumb-item active">Report</li>
+    </ol>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-table me-1"></i>
+            Tree View
+        </div>
+        <div class="card-body">
+            <div class="mb-3">
+                <input type="text" id="searchInput" class="form-control" placeholder="Input name or referral code..">
+            </div>
+            <div class="container mt-5">
+                <div id="orgChart" class="org-chart"></div>
+            </div>
+        </div>
+
+        <!-- MDB JS -->
+        <script src="https://cdn.jsdelivr.net/npm/mdb-ui-kit@6.4.0/js/mdb.min.js"></script>
+        <script>
+            // Sample array representing the org chart
+            const orgData = [
+                {
+                    name: "Tiger Nixon - DJENX3",
+                    children: [
+                        {
+                            name: "Agus",
+                            children: [
+                                { name: "Laura",
+                                children:[{name:"Wylie"}]
+                                },
+                                { name: "Samuel" }
+                            ]
+                        },
+                        {
+                            name: "Budi",
+                            children: [
+                                { name: "Horas" },
+                                { name: "Mario" }
+                            ]
+                        }
+                    ]
+                }
+            ];
+
+            // Function to generate the org chart
+            function generateOrgChart(data, container) {
+                if (!data) return;
+
+                const node = document.createElement('div');
+                node.className = 'org-node shadow-3';
+                node.textContent = data.name;
+
+                if (data.children && data.children.length > 0) {
+                    const childrenContainer = document.createElement('div');
+                    childrenContainer.className = 'org-children';
+
+                    data.children.forEach(child => {
+                        generateOrgChart(child, childrenContainer);
+                    });
+
+                    node.appendChild(childrenContainer);
+                }
+
+                container.appendChild(node);
+            }
+
+            // Generate the org chart on page load
+            document.addEventListener('DOMContentLoaded', () => {
+                const orgChartContainer = document.getElementById('orgChart');
+                generateOrgChart(orgData[0], orgChartContainer);
+            });
+        </script>
+    </div>
+{% endblock %}
