@@ -20,13 +20,13 @@
         .org-node {
             margin: 20px;
             padding: 20px 30px;
-            border: 1px solid #ddd;
-            border-radius: 12px;
+            /* border: 1px solid #ddd; */
+            /* border-radius: 12px; */
             text-align: center;
-            background-color: #fff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            /* background-color: #fff; */
+            /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
             position: relative;
-            font-size: 18px;
+            /* font-size: 18px; */
             font-weight: 600;
             color: #333;
         }
@@ -127,7 +127,7 @@
                 if (!data) return;
 
                 const node = document.createElement('div');
-                node.className = 'org-node shadow-3';
+                node.className = 'org-node';
                 node.textContent = data.name;
 
                 if (data.children && data.children.length > 0) {
