@@ -117,7 +117,7 @@
             </div>
             <div id="layoutSidenav_content">
                 <main>
-                    {% block content %}{% endblock %}
+                    @yield('content')
                 </main>
                 <footer class="py-4 bg-light mt-auto">
                     <div class="container-fluid px-4">
