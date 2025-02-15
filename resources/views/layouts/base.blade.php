@@ -14,7 +14,7 @@
     <body class="sb-nav-fixed">
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
             <!-- Navbar Brand-->
-            <a class="navbar-brand ps-3" href="{{url_for('index')}}">Company</a>
+            <a class="navbar-brand ps-3" href="{{route('index')}}">Company</a>
             <!-- Sidebar Toggle-->
             <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
             <!-- Navbar Search-->
@@ -48,11 +48,11 @@
                                 Dashboard
                             </a>
                             <div class="sb-sidenav-menu-heading">Interface</div>
-                            <a class="nav-link" href="{{route('approval')}}">
+                            <a class="nav-link" href="{{route('index')}}">
                                 <div class="sb-nav-link-icon"><i class="fas fa-person-circle-check"></i></div>
                                 Approval
                             </a>
-                            <a class="nav-link" href="{{route('report')}}">
+                            <a class="nav-link" href="{{route('index')}}">
                                 <div class="sb-nav-link-icon"><i class="fas fa-users-between-lines"></i></div>
                                 Report
                             </a>
@@ -135,10 +135,5 @@
         </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
         <script src="{{asset('js/scripts.js')}}"></script>
-        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
-        <script src="{{url_for('static', filename='assets/demo/chart-area-demo.js')}}"></script>
-        <script src="{{url_for('static', filename='assets/demo/chart-bar-demo.js')}}"></script>
-        <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
-        <script src="{{url_for('static', filename='js/datatables-simple-demo.js')}}"></script> -->
     </body>
 </html>
