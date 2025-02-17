@@ -37,8 +37,8 @@ class User extends Authenticatable
     ];
 
     protected $casts = [
-        'is_admin' => 'boolean',
-        'is_paid' => 'boolean',
+        'is_admin' => 'string',
+        'is_paid' => 'string',
         'created' => 'datetime',
         'updated' => 'datetime',
     ];

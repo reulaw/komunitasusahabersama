@@ -34,7 +34,20 @@ class AuthController extends Controller
 
         // Cek kredensial login
         if (Auth::attempt(['user_id' => $credentials['user_id'], 'password' => $credentials['password']])) {
-            return redirect()->route('index')->with('success', 'Login berhasil!');
+            $userLogin = Auth::user();
+
+            // dd($userLogin);
+            // dd(gettype($userLogin->is_admin));
+
+            session(['userLogin' => $userLogin]);
+
+            if ($userLogin->is_admin == 'Y'){
+                return redirect()->route('admin.index')->with('success','Login berhasil!');
+            }else
+            {
+                return redirect()->route('index')->with('success', 'Login berhasil!');
+            }
+
         }
 
         // Jika gagal, kembali ke halaman login dengan pesan error
@@ -107,11 +120,15 @@ class AuthController extends Controller
                 'acc_number'   => $request->acc_number,
                 'acc_name'     => $request->acc_name,
             ]);
-    
-            $userReferral = UserReferral::create([
-                'user_id'      => $request->user_id,
-                'referral_code'=> $request->referral_code,
-            ]);
+
+            if($request->referral_code){
+                $userReferral = UserReferral::create([
+                    'user_id'      => $request->user_id,
+                    'referral_code'=> $request->referral_code,
+                ]);
+
+            }
+
 
             DB::commit();
             return redirect()->route('login')->with('success', 'Registrasi berhasil! Silakan cek email.');
