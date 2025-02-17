@@ -9,24 +9,48 @@
         <title>Login - Komunitas Usaha Bersama</title>
         <link href="{{asset('css/styles.css')}}" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+        <style>
+    .alert {
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 15px;
+    }
+    .alert-success {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+</style>
+
     </head>
     <body class="bg-primary">
         <div id="layoutAuthentication">
             <div id="layoutAuthentication_content">
                 <main>
                     <div class="container">
-                        <div class="row justify-content-center">
+                        <div class="row justify-content-center mb-4">
                             <div class="col-lg-5">
                                 <div class="card shadow-lg border-0 rounded-lg mt-5">
+                                    @if(session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
                                     <div class="card-header"><h3 class="text-center font-weight-light my-4">Login</h3></div>
                                     <div class="card-body">
-                                        <form>
+                                        @if (session('error'))
+                                            <div class="alert alert-danger">
+                                                {{ session('error') }}
+                                            </div>
+                                        @endif
+                                        <form method="POST" action="{{route('login.submit')}}">
+                                            @csrf
                                             <div class="form-floating mb-3">
-                                                <input class="form-control" id="inputEmail" type="email" placeholder="name@example.com" />
-                                                <label for="inputEmail">User ID</label>
+                                                <input class="form-control" id="inputUserID" name="user_id" type="text" placeholder="User ID" required />
+                                                <label for="inputUserID">User ID</label>
                                             </div>
                                             <div class="form-floating mb-3">
-                                                <input class="form-control" id="inputPassword" type="password" placeholder="Password" />
+                                                <input class="form-control" id="inputPassword" name="password" type="password" placeholder="Password" required />
                                                 <label for="inputPassword">Password</label>
                                             </div>
                                             <div class="form-check mb-3">
@@ -35,7 +59,7 @@
                                             </div>
                                             <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
                                                 <a class="small" href="password.html">Forgot Password?</a>
-                                                <a class="btn btn-primary" href="index.html">Login</a>
+                                                <button type="submit" class="btn btn-primary">Login</button>
                                             </div>
                                         </form>
                                     </div>
@@ -64,6 +88,6 @@
             </div>
         </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-        <script src="{{asset('js/script.js')}}"></script>
+        <script src="{{asset('js/scripts.js')}}"></script>
     </body>
 </html>

@@ -15,7 +15,7 @@ class User extends Authenticatable
 
     protected $primaryKey = 'id'; // Primary Key
 
-    public $timestamps = true; // Aktifkan timestamps (created_at & updated_at)
+    public $timestamps = false; // Aktifkan timestamps (created_at & updated_at)
 
     protected $fillable = [
         'user_id',
@@ -46,10 +46,15 @@ class User extends Authenticatable
     /**
      * Set Password: Hash otomatis saat disimpan
      */
-    protected function password(): Attribute
-    {
-        return Attribute::make(
-            set: fn ($value) => bcrypt($value)
-        );
-    }
+    // protected function password(): Attribute
+    // {
+    //     return Attribute::make(
+    //         set: fn ($value) => bcrypt($value)
+    //     );
+    // }
+
+    // public function getAuthIdentifierName()
+    // {
+    //     return 'user_id';
+    // }
 }
