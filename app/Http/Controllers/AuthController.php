@@ -34,20 +34,7 @@ class AuthController extends Controller
 
         // Cek kredensial login
         if (Auth::attempt(['user_id' => $credentials['user_id'], 'password' => $credentials['password']])) {
-            $userLogin = Auth::user();
-
-            // dd($userLogin);
-            // dd(gettype($userLogin->is_admin));
-
-            session(['userLogin' => $userLogin]);
-
-            if ($userLogin->is_admin == 'Y'){
-                return redirect()->route('admin.index')->with('success','Login berhasil!');
-            }else
-            {
-                return redirect()->route('index')->with('success', 'Login berhasil!');
-            }
-
+            return redirect()->route('index')->with('success', 'Login berhasil!');
         }
 
         // Jika gagal, kembali ke halaman login dengan pesan error
@@ -60,16 +47,28 @@ class AuthController extends Controller
         return redirect()->route('login')->with('success', 'Anda telah logout.');
     }
 
+    // public function register($referral_code = null)
+    // {
+    //     $isReferralFromUrl = false;
+
+    //     if($referral_code && User::where('referral_code', $referral_code)->exists()){
+    //         $isReferralFromUrl = true;
+    //     }
+    //     return view('auth.register', [
+    //         'referral_code' => $referral_code,
+    //         'isReferralFromUrl' => $isReferralFromUrl
+    //     ]);
+    // }
     public function register($referral_code = null)
     {
-        $isReferralFromUrl = false;
-
-        if($referral_code && User::where('referral_code', $referral_code)->exists()){
-            $isReferralFromUrl = true;
+        // Jika referral code kosong atau tidak ditemukan di database, redirect ke login
+        if (!$referral_code || !User::where('referral_code', $referral_code)->exists()) {
+            return redirect()->route('login')->with('error', 'Referral tidak ditemukan.');
         }
+
         return view('auth.register', [
             'referral_code' => $referral_code,
-            'isReferralFromUrl' => $isReferralFromUrl
+            'isReferralFromUrl' => true
         ]);
     }
 
@@ -78,6 +77,7 @@ class AuthController extends Controller
 
 
         // dd($request->all());
+
         // Validasi input
         $request->validate([
             'user_id'      => 'required|string|unique:users,user_id',
@@ -89,7 +89,7 @@ class AuthController extends Controller
             'bank_name'    => 'nullable|string|max:100',
             'acc_number'   => 'nullable|numeric|digits_between:5,20', // Perbaikan: gunakan `digits_between`
             'acc_name'     => 'nullable|string|max:255',
-            'referral_code'=> 'nullable|string|exists:users,referral_code'
+            'referral_code'=> 'nullable|string'
         ]);
         
 
@@ -120,15 +120,11 @@ class AuthController extends Controller
                 'acc_number'   => $request->acc_number,
                 'acc_name'     => $request->acc_name,
             ]);
-
-            if($request->referral_code){
-                $userReferral = UserReferral::create([
-                    'user_id'      => $request->user_id,
-                    'referral_code'=> $request->referral_code,
-                ]);
-
-            }
-
+    
+            $userReferral = UserReferral::create([
+                'user_id'      => $request->user_id,
+                'referral_code'=> $request->referral_code,
+            ]);
 
             DB::commit();
             return redirect()->route('login')->with('success', 'Registrasi berhasil! Silakan cek email.');

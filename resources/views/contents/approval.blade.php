@@ -33,7 +33,7 @@
                                 <table id="datatablesSimple">
                                     <thead>
                                         <tr>
-                                            <th data-sortable="false"><input type="checkbox" id="selectAll"></th>
+                                            <!-- <th data-sortable="false"><input type="checkbox" id="selectAll"></th> -->
                                             <th>Name</th>
                                             <th>NIK</th>
                                             <th>No WA</th>
@@ -59,7 +59,7 @@
                                     <tbody>
                                         @foreach($unpaidUsers as $unpaidUser)
                                         <tr>
-                                            <td><input type="checkbox" class="row-checkbox"></td>
+                                            <!-- <td><input type="checkbox" class="row-checkbox"></td> -->
                                             <td>{{$unpaidUser->nama}}</td>
                                             <td>{{$unpaidUser->nik}}</td>
                                             <td>{{$unpaidUser->wa_number}}</td>
