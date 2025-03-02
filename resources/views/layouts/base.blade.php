@@ -57,11 +57,11 @@
                                 <div class="sb-nav-link-icon"><i class="fas fa-money-bill-transfer"></i></div>
                                 Commission
                             </a>
+                            @endif
                             <a class="nav-link" href="{{route('org.chart')}}">
                                 <div class="sb-nav-link-icon"><i class="fas fa-sitemap"></i></div>
                                 Tree View
                             </a>
-                            @endif
                             <a class="nav-link" href="{{route('registered.users')}}">
                                 <div class="sb-nav-link-icon"><i class="fas fa-users-between-lines"></i></div>
                                 Report

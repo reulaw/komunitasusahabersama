@@ -6,67 +6,48 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="" />
         <meta name="author" content="" />
-        <title>Login - Komunitas Usaha Bersama</title>
-        <link href="{{asset('css/styles.css')}}" rel="stylesheet" />
+        <title>Password Reset - Komunitas Usaha Bersama</title>
+        <link href="css/styles.css" rel="stylesheet" />
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
-        <style>
-    .alert {
-        padding: 15px;
-        border-radius: 5px;
-        margin-bottom: 15px;
-    }
-    .alert-success {
-        background-color: #d4edda;
-        color: #155724;
-        border: 1px solid #c3e6cb;
-    }
-</style>
-
     </head>
     <body class="bg-primary">
         <div id="layoutAuthentication">
             <div id="layoutAuthentication_content">
                 <main>
                     <div class="container">
-                        <div class="row justify-content-center mb-4">
+                        <div class="row justify-content-center">
                             <div class="col-lg-5">
                                 <div class="card shadow-lg border-0 rounded-lg mt-5">
-                                    
-                                    <div class="card-header"><h3 class="text-center font-weight-light my-4">Login</h3></div>
+                                    <div class="card-header"><h3 class="text-center font-weight-light my-4">Password Recovery</h3></div>
                                     <div class="card-body">
-                                        @if (session('error'))
-                                            <div class="alert alert-danger">
-                                                {{ session('error') }}
-                                            </div>
-                                        @endif
                                         @if(session('success'))
-                                            <div class="alert alert-success">
-                                                {{ session('success') }}
+                                            <div class="alert alert-success">{{ session('success') }}</div>
+                                        @endif
+                                        @if($errors->any())
+                                            <div class="alert alert-danger">
+                                                <ul>
+                                                    @foreach ($errors->all() as $error)
+                                                        <li>{{ $error }}</li>
+                                                    @endforeach
+                                                </ul>
                                             </div>
                                         @endif
-                                        <form method="POST" action="{{route('login.submit')}}">
+                                        <div class="small mb-3 text-muted">Enter your user id and we will send you a link via email to reset your password.</div>
+                                        <form action="{{ route('password.link') }}" method="POST">
                                             @csrf
                                             <div class="form-floating mb-3">
-                                                <input class="form-control" id="inputUserID" name="user_id" type="text" placeholder="User ID" required />
+                                                <input name="user_id" class="form-control" id="inputUserID" type="text" placeholder="name@example.com" required />
                                                 <label for="inputUserID">User ID</label>
                                             </div>
-                                            <div class="form-floating mb-3">
-                                                <input class="form-control" id="inputPassword" name="password" type="password" placeholder="Password" required />
-                                                <label for="inputPassword">Password</label>
-                                            </div>
-                                            <div class="form-check mb-3">
-                                                <input class="form-check-input" id="inputRememberPassword" type="checkbox" value="" />
-                                                <label class="form-check-label" for="inputRememberPassword">Remember Password</label>
-                                            </div>
                                             <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
-                                                <a class="small" href="{{route('forgot.password')}}">Forgot Password?</a>
-                                                <button type="submit" class="btn btn-primary">Login</button>
+                                            <a class="small" href="{{route('login')}}">Return to login</a>
+                                                <button type="submit" class="btn btn-primary">Reset Password</button>
                                             </div>
                                         </form>
                                     </div>
-                                    <div class="card-footer text-center py-3">
-                                        <div class="small"><a href="{{route('register')}}">Need an account? Sign up!</a></div>
-                                    </div>
+                                    <!-- <div class="card-footer text-center py-3">
+                                        <div class="small"><a href="register.html">Need an account? Sign up!</a></div>
+                                    </div> -->
                                 </div>
                             </div>
                         </div>

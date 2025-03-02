@@ -9,9 +9,12 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use App\Mail\SendWelcomeEmail;
+use App\Mail\ResetPasswordMail;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Models\PasswordResetToken;
 
 
 class AuthController extends Controller
@@ -102,6 +105,12 @@ class AuthController extends Controller
         $referralCode = Str::upper(Str::random(10));
         // $generatedReferralCode = $referralCode ?? Str::upper(Str::random(10));
 
+        // $referrer = User::where('referral_code', $request->referral_code)->first();
+
+        $availableReferrer = $this->findAvailableReferrer($request->referral_code);
+        
+        // dd($availableReferrer);
+        
         DB::beginTransaction();
 
         try{
@@ -120,10 +129,9 @@ class AuthController extends Controller
                 'acc_number'   => $request->acc_number,
                 'acc_name'     => $request->acc_name,
             ]);
-    
             $userReferral = UserReferral::create([
                 'user_id'      => $request->user_id,
-                'referral_code'=> $request->referral_code,
+                'referral_code'=> $availableReferrer->referral_code,
             ]);
 
             DB::commit();
@@ -150,4 +158,89 @@ class AuthController extends Controller
         
     }
 
+    private function findAvailableReferrer($referrerCode)
+    {
+        $referralCount = UserReferral::where('referral_code', $referrerCode)->count();
+
+        if ($referralCount < 10) {
+            return User::where('referral_code', $referrerCode)->first();
+        }
+
+        $oldestReferrer = User::join('referral_mapping as rm', 'rm.referral_code', '=', 'users.referral_code')
+                            ->join('users as u2', 'u2.user_id', '=', 'rm.user_id')
+                            ->where('rm.referral_code', $referrerCode)
+                            ->orderBy('u2.created', 'asc')
+                            ->first();
+
+        if ($oldestReferrer) {
+            return $this->findAvailableReferrer($oldestReferrer->referral_code);
+        }
+
+        return null;
+    }
+
+    public function showForgotPassword()
+    {
+        return view('auth.forgot-password');
+    }
+
+    public function sendResetLinkEmail(Request $request)
+    {
+        $request->validate([
+            'user_id'   => 'required|string|exists:users,user_id',
+        ]);
+
+        $user = User::where('user_id', $request->user_id)->first();
+
+        PasswordResetToken::where('user_id', $user->user_id)->delete();
+
+        $token = bin2hex(random_bytes(32));
+
+        PasswordResetToken::create([
+            'user_id'   => $user->user_id,
+            'email'     => $user->email,
+            'token'     => Hash::make($token),
+            'created_at'=> now(),
+        ]);
+
+        $resetUrl = url('/reset-password?token=' . $token . '&email=' . $user->email . '&user_id=' . $user->user_id);
+        $userName = $user->nama;
+
+        Mail::to($user->email)->send(new ResetPasswordMail($resetUrl, $userName));
+
+        return back()->with('success', 'Email reset password telah dikirim.');
+
+    }
+
+    public function showResetForm()
+    {
+        return view('auth.reset-password');
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required|string|exists:users,user_id',
+            'email' => 'required|email|exists:users,email',
+            'password' => 'required|string|min:6|confirmed',
+            'token' => 'required'
+        ]);
+
+        $reset = PasswordResetToken::where('user_id', $request->user_id)
+                                    ->where('email', $request->email)                           
+                                    ->first();
+
+        if (!$reset || !Hash::check($request->token, $reset->token)) {
+            return back()->withErrors(['token' => 'Token tidak valid atau sudah kedaluwarsa.']);
+        }
+
+        $user = User::where('user_id', $request->user_id)
+                    ->where('email', $request->email)
+                    ->first();
+        $user->update(['password' => Hash::make($request->password)]);
+
+        $reset->delete();
+
+        return redirect('/login')->with('success', 'Password berhasil direset.');
+    }
 }

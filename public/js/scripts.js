@@ -58,3 +58,47 @@ window.addEventListener('DOMContentLoaded', event => {
 
 
 });
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    google.charts.load('current', { packages: ["orgchart"] });
+    google.charts.setOnLoadCallback(fetchAndDrawChart);
+
+    function fetchAndDrawChart(selectedReferral = '') {
+        fetch(`/api/referral-hierarchy?referral_code=${selectedReferral}`)
+            .then(response => response.json())
+            .then(data => {
+                drawChart(data);
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    }
+
+    function drawChart(treeUsers) {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Referral Code');
+        data.addColumn('string', 'Referred Code');
+        data.addColumn('string', 'ToolTip');
+
+        var treeData = treeUsers.map(user => [
+            { 
+                v: user.referral_code, 
+                f: `<div class="org-card">
+                        <strong>${user.user_id}</strong><br>
+                        <small>${user.referral_code}</small><br>
+                        <small>${user.nama}</small><br>
+                    </div>`
+            }, 
+            user.referred_code || "", 
+            user.user_id
+        ]);
+
+        data.addRows(treeData);
+        var chart = new google.visualization.OrgChart(document.getElementById('chart_div'));
+        chart.draw(data, { allowHtml: true, compactRows: true });
+    }
+
+    // Event listener untuk filter (hanya untuk admin)
+    document.getElementById("referralFilter")?.addEventListener("change", function () {
+        fetchAndDrawChart(this.value);
+    });
+});

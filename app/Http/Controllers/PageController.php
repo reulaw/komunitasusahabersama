@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\UserReferral;
@@ -49,24 +48,53 @@ class PageController extends Controller
         return response()->json($details);
     }
 
-    public function referralHierarchy()
+    public function showHierarchyPage()
     {
-        $treeUsers = User::leftJoin('referral_mapping as rm', 'users.user_id', '=', 'rm.user_id')
-                    ->select([
-                        'users.user_id as user_id',
-                        'users.nama as nama',
-                        'users.referral_code as referral_code',
-                        'rm.referral_code as referred_code'
-                    ])
-                    ->get();
+        $user = Auth::user();
+
+        if ($user->is_admin == 'Y'){
+            $allReferralCodes = User::pluck('nama', 'referral_code');
+        } else{
+            $allReferralCodes = User::where('user_id', $user->user_id)
+                                    ->pluck('nama', 'referral_code');
+        }
         
-        return view('contents.org-chart', compact('treeUsers'));
+
+        return view('contents.org-chart', compact('allReferralCodes'));
     }
 
-    public function referralHierarchyFilter(Request $request)
+    public function referralHierarchy(Request $request)
     {
-        $referralCode = $request->referral_code;
-        
+        $user = Auth::user();
+        $selectedReferral = $request->input('referral_code', '');
+    
+        if ($user->is_admin == 'N') {
+            // Ambil data dari stored procedure hanya jika user bukan admin
+            $treeUsers = DB::select('CALL GetReferralHierarchy(?)', [$user->referral_code]);
+            
+            // Pastikan hasilnya dalam format koleksi Laravel
+            // $treeUsers = collect($treeUsers);
+            return response()->json(collect($treeUsers));
+            
+        } else {
+            // Query untuk admin
+            $query = User::leftJoin('referral_mapping as rm', 'users.user_id', '=', 'rm.user_id')
+                ->select([
+                    'users.user_id as user_id',
+                    'users.nama as nama',
+                    'users.referral_code as referral_code',
+                    'rm.referral_code as referred_code'
+                ]);
+    
+            if ($selectedReferral) {
+                $query->where('users.referral_code', $selectedReferral)
+                      ->orWhere('rm.referral_code', $selectedReferral);
+            }
+    
+            $treeUsers = $query->get();
+        }
+    
+        return response()->json($treeUsers);
     }
     
 
