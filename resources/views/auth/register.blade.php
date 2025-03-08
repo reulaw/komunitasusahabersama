@@ -22,18 +22,21 @@
                                     <div class="card-body">
                                     <form action="{{ route('register') }}" method="POST">
                                         @csrf
-                                        
                                         <div class="row mb-3">
                                             <div class="col-md-6">
                                                 <div class="form-floating mb-3 mb-md-0">
-                                                    <input class="form-control @error('nama') is-invalid @enderror" id="inputNama" type="text" name="nama" value="{{ old('nama') }}" placeholder="Masukkan Nama Anda" required />
+                                                    <input class="form-control @error('nama') is-invalid @enderror" id="inputNama" type="text" name="nama" 
+                                                    value="{{ old('nama') }}" placeholder="Masukkan Nama Anda" oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, '')"
+                                                     required />
                                                     <label for="inputNama">Nama</label>
                                                     @error('nama') <div class="text-danger small">{{ $message }}</div> @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-floating">
-                                                    <input class="form-control @error('nik') is-invalid @enderror" id="inputNIK" type="text" name="nik" value="{{ old('nik') }}" placeholder="Masukkan NIK Anda" required />
+                                                    <input class="form-control @error('nik') is-invalid @enderror" id="inputNIK" type="text" name="nik" 
+                                                    value="{{ old('nik') }}" placeholder="Masukkan NIK Anda" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0,16)"
+                                                     required />
                                                     <label for="inputNIK">NIK</label>
                                                     @error('nik') <div class="text-danger small">{{ $message }}</div> @enderror
                                                 </div>
@@ -43,7 +46,9 @@
                                         <div class="row mb-3">
                                             <div class="col-md-6">
                                                 <div class="form-floating mb-3 mb-md-0">
-                                                    <input class="form-control @error('wa_number') is-invalid @enderror" id="inputNoWA" type="text" name="wa_number" value="{{ old('wa_number') }}" placeholder="Masukkan No WA Anda" required />
+                                                    <input class="form-control @error('wa_number') is-invalid @enderror" id="inputNoWA" type="text" name="wa_number" 
+                                                    value="{{ old('wa_number') }}" placeholder="Masukkan No WA Anda" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0,16)"
+                                                    required />
                                                     <label for="inputNoWA">No. WA</label>
                                                     @error('wa_number') <div class="text-danger small">{{ $message }}</div> @enderror
                                                 </div>
@@ -60,19 +65,22 @@
                                         <div class="row mb-3">
                                             <div class="col-md-4">
                                                 <div class="form-floating mb-3 mb-md-0">
-                                                    <input class="form-control" id="inputNamaBank" type="text" name="bank_name" value="{{ old('bank_name') }}" placeholder="Masukkan Nama Bank Anda" />
+                                                    <input class="form-control" id="inputNamaBank" type="text" name="bank_name" value="{{ old('bank_name') }}" 
+                                                    placeholder="Masukkan Nama Bank Anda" oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, '')" required />
                                                     <label for="inputNamaBank">Nama Bank</label>
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-floating">
-                                                    <input class="form-control" id="inputNoRek" type="text" name="acc_number"  value="{{ old('acc_number') }}" placeholder="Masukkan No Rek Anda" />
+                                                    <input class="form-control" id="inputNoRek" type="text" name="acc_number"  value="{{ old('acc_number') }}" 
+                                                    placeholder="Masukkan No Rek Anda" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0,16)" required />
                                                     <label for="inputNoRek">No. Rek</label>
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-floating">
-                                                    <input class="form-control" id="inputNamaRek" type="text" name="acc_name" value="{{ old('acc_name') }}" placeholder="Masukkan Nama Rekening Anda" />
+                                                    <input class="form-control" id="inputNamaRek" type="text" name="acc_name" value="{{ old('acc_name') }}" 
+                                                    placeholder="Masukkan Nama Rekening Anda" oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, '')" required />
                                                     <label for="inputNamaRek">Nama di Rek</label>
                                                 </div>
                                             </div>
@@ -81,7 +89,8 @@
                                         <hr class="col-md-12 border border-1 my-4">
 
                                         <div class="form-floating mb-3">
-                                            <input class="form-control @error('user_id') is-invalid @enderror" id="inputUserID" type="text" name="user_id" value="{{ old('user_id') }}" placeholder="Masukkan User ID" required />
+                                            <input class="form-control @error('user_id') is-invalid @enderror" id="inputUserID" type="text" name="user_id" value="{{ old('user_id') }}" 
+                                            placeholder="Masukkan User ID" oninput="this.value = this.value.replace(/[^a-z0-9_-]/g, '').slice(0,20)" required />
                                             <label for="inputUserID">User ID</label>
                                             @error('user_id') <div class="text-danger small">{{ $message }}</div> @enderror
                                         </div>

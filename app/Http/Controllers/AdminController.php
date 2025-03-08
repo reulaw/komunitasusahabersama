@@ -6,6 +6,9 @@ use App\Models\TransferHistory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\TransferNotificationMail;
+use Carbon\Carbon;
 
 class AdminController extends Controller
 {
@@ -84,15 +87,30 @@ class AdminController extends Controller
                 'created_by'        => Auth::user()->user_id,
                 'acc_name'          => $request->acc_name,
                 'acc_number'        => $request->acc_number
-            ]);       
-            DB::commit();
 
+            ]);       
+        
+            $userName       = $user->nama;
+            $now            = Carbon::now();
+            $userAccNumber  = $user->acc_number;
+            $amountTransfer = $amount;
+
+            // $userName   = "test";
+            // $now = "293010203";
+            // $userAccNumber = "8391284423";
+            // $amountTransfer = 38294832;
+            Mail::to($user->email)->send(new TransferNotificationMail($userName, $amountTransfer, $now, $userAccNumber));
+            // Mail::to('abelaurens@gmail.com')->send(new TransferNotificationMail($userName, $amountTransfer, $now, $userAccNumber));
+            DB::commit();
             return redirect()->back()->with('success', 'Transfer berhasil!');
+
         } catch (\Exception $e){
             DB::rollback();
             return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
 
+
+        
 
 
         // $transferHistory = transferHistory::create([
@@ -100,5 +118,14 @@ class AdminController extends Controller
         // ])
 
        
+    }
+
+    public function showListUmroh()
+    {
+        $userUmroh = User::where('is_paid', 'Y')
+                            ->where('is_admin','N')
+                            ->where('pendapatan','>=','35000000')
+                            ->get();
+        return view('admin.list-umroh', compact('userUmroh'));
     }
 }

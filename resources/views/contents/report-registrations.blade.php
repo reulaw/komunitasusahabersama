@@ -24,7 +24,7 @@
 @extends('layouts.base')
 
 @section('content')
-<div class="container-fluid px-4">
+                    <div class="container-fluid px-4">
                         <h1 class="mt-4">Registered Users</h1>
                         <ol class="breadcrumb mb-4">
                             <li class="breadcrumb-item"><a href="{{route('index')}}">Dashboard</a></li>
@@ -95,6 +95,6 @@
                         </div>
                     </div>
         <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
-        <script src="{{asset('js/datatables-simple.js')}}"></script>
+        <script src="{{asset('js/datatables-simple.js')}}?v={{ time() }}"></script>
         @endsection
 

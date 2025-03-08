@@ -45,5 +45,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/referral-hierarchy', [PageController::class, 'showHierarchyPage'])->name('org.chart');
     Route::get('/api/referral-hierarchy', [PageController::class, 'referralHierarchy']);
 
+    Route::get('/list-umroh', [AdminController::class, 'showListUmroh'])->name('list.umroh');
+
+    Route::get('/user-profile', [PageController::class, 'showUserProfile'])->name('user.profile');
+    Route::post('/user-profile', [PageController::class, 'updateUser'])->name('update.user');
+    Route::post('/user-profile/changepassword', [PageController::class, 'changePassword'])->name('change.password');
+
     
 });

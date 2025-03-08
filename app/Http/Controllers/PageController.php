@@ -7,6 +7,8 @@ use App\Models\User;
 use App\Models\UserReferral;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Hash;
 
 class PageController extends Controller
 {
@@ -97,5 +99,65 @@ class PageController extends Controller
         return response()->json($treeUsers);
     }
     
+    public function showUserProfile()
+    {
+        $user = Auth::user();
+        return view('contents.user-profile', compact('user'));
+    }
+
+    public function updateUser(Request $request)
+    {
+        $user = Auth::user();
+
+        $request->validate([
+            'nama'          => 'required|string',
+            'waNumber'      => 'required|string',
+            'accBankName'   => 'required|string',
+            'accNumber'     => 'required|string',
+            'accName'       => 'required|string',
+            'email'         => 'required|email'
+        ]);
+        
+        $user->update([
+            'nama'      => $request->nama,
+            'wa_number' => $request->waNumber,
+            'bank_name' => $request->accBankName,
+            'acc_number'=> $request->accNumber,
+            'acc_name'  => $request->accName,
+            'email'     => $request->email,
+        ]);
+
+        return back()->with('success', 'Profil berhasil diperbarui!');
+    }
+
+    public function changePassword(Request $request)
+    {
+        try {
+            // Validasi input
+            $request->validate([
+                'currentPassword' => ['required'],
+                'newPassword' => ['required', 'min:8', 'confirmed'],
+            ]);
+        } catch (ValidationException $e) {
+            // Jika validasi gagal, tetap di tab "Change Password"
+            return redirect()->back()
+                             ->withErrors($e->validator)
+                             ->with('active_tab', 'change-password-tab');
+        }
+    
+        $user = Auth::user();
+    
+        if (!Hash::check($request->currentPassword, $user->password)) {
+            return redirect()->back()
+                             ->withErrors(['currentPassword' => 'Password lama tidak sesuai!'])
+                             ->with('active_tab', 'change-password-tab');
+        }
+    
+        $user->update(['password' => Hash::make($request->newPassword)]);
+    
+        return redirect()->back()
+                         ->with('success', 'Password berhasil diperbarui!')
+                         ->with('active_tab', 'change-password-tab');
+    }
 
 }
